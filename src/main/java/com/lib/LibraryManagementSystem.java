@@ -1,6 +1,6 @@
 package com.lib;
 
-import java.util.Scanner;
+import com.lib.cli.LibraryCLI;
 
 // library management main class
 public class LibraryManagementSystem {

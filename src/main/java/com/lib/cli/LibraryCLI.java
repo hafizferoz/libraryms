@@ -1,9 +1,13 @@
 package com.lib.cli;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.Scanner;
 
-public class LibraryCLI {
-    private Scanner scanner;
+@Component
+public class LibraryCLI implements Runnable{
+    private final Scanner scanner;
     public LibraryCLI() {
         this.scanner = new Scanner(System.in);
     }
@@ -19,7 +23,6 @@ public class LibraryCLI {
             }
             processCmd(input);
         }
-
     }
 
     private void processCmd(String input) {

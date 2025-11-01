@@ -15,3 +15,29 @@ Waitlist System: Users can join waiting list for borrowed books, and automatical
 Status Tracking: Users can view their borrowed books and waiting list positions.
 
 Fresh Start: Each session execution creates a new environment. The system uses in memory H2 db which will refresh on restart. 
+
+
+# Implementation Details:
+
+Tech Stack: Java, Springboot and H2 DB (in memory)
+
+Waiting list Logic:
+When a book is returned, the first person in the waiting list automatically gets it and 
+Waiting list positions are dynamically updated. While changes are pushed in DB as batch, however for real world scenarios cacheing mechanism can be utilized for better performance.
+Users are notified on login if they received a book from their waiting list. The status is 
+
+Command Parsing: Booth quoted and unquoted book names are handled.
+
+Application Start:
+
+LibraryMSApplication: The spring boot main application runs a cli thread to interact via command prompt.
+
+start.bat: Windows batch file which will complie and run the application.
+start.sh: Unix/Linux Bash script that compiles and runs the application.
+
+
+To start on Unix/Linux:
+./start.sh
+
+To start on windows:
+start.bat

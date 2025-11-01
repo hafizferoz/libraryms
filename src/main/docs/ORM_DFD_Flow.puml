@@ -2,34 +2,36 @@
 title ORM Design - Library Management System
 
 entity "User" as User {
-  * id : Long <<PK>>
+  * user_name : Long <<PK>>
   --
-  name : String
+  borrowedBooks : List<Book>
 }
 
 entity "Book" as Book {
-  * id : Long <<PK>>
+  * id : String<<PK>>
   --
-  title : String
-  status : String  // available, borrowed
+  bookName : String
+  is_borrowed : Boolean  // available, borrowed
 }
 
-entity "Borrowed" as Borrowed {
+entity "BorrowedBooks" as BorrowedBooks {
   * id : Long <<PK>>
   --
-  borrowDate : LocalDateTime
-  returnDate : LocalDateTime
+  book : Book
+  user : User
 }
 
 entity "Waitlist" as Waitlist {
   * id : Long <<PK>>
   --
+   book : Book
+   user : User
   position : Integer
 }
 
 ' --- Relationships ---
-User ||--o{ Borrowed : borrows >
-Book ||--o{ Borrowed : is borrowed in >
+User ||--o{ BorrowedBooks : borrows >
+Book ||--o{ BorrowedBooks : is borrowed in >
 User ||--o{ Waitlist : requests >
 Book ||--o{ Waitlist : queued for >
 

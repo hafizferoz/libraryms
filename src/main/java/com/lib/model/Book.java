@@ -20,6 +20,11 @@ public class Book implements Serializable {
     @JoinColumn(name = "borrowed_by", referencedColumnName = "user_name")
     private User borrowedBy;
 
+    public Book(){}
+    public Book(String bookName) {
+        this.bookName=bookName;
+    }
+
     public String getBookName() {
         return bookName;
     }

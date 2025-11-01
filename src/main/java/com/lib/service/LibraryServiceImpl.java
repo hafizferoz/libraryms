@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -24,16 +23,16 @@ public class LibraryServiceImpl implements LibraryService{
     public void login(String user) {
         if (verifyIsUserLogout()) return;
         loggedUser = userService.findUser(user);
-        String username = loggedUser.get().getUsername();
-        if(isAdmin(username)){
+        if(isAdmin()){
             System.out.println("Hello, admin!\nYou have access to library management.");
         }else{
-            System.out.printf("Hello, %s!\n", username);
+            System.out.printf("Hello, %s!\n", user);
         }
 
     }
 
-    private boolean isAdmin(String username) {
+    private boolean isAdmin() {
+        String username = loggedUser.get().getUsername();
         return loggedUser.isPresent() && username.equalsIgnoreCase("admin");
     }
 
@@ -63,7 +62,13 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void addBook(String bookName) {
-
+        if(verifyIsUserLogin()) return;
+        if (!isAdmin()) { System.out.println("Only admin can add books."); return; }
+        if (bookService.bookExists(bookName)) {
+            System.out.println("Book \"" + bookName + "\" already exists."); return;
+        }
+        bookService.save(new Book(bookName));
+        System.out.println("Book \"" + bookName + "\" has been added to the library.");
     }
 
     @Override
@@ -75,9 +80,10 @@ public class LibraryServiceImpl implements LibraryService{
             System.out.println("No books are registered");
             return;
         }
-        AtomicInteger sno = new AtomicInteger(0);
+        AtomicInteger sno = new AtomicInteger(1);
         books.forEach(book -> {
-            System.out.printf("%d. %s (%s)%n",sno.getAndIncrement() , book.getBookName(), book.isBorrowed() ? "available" : "borrowed");
+            String borrowed = book.isBorrowed() ?  "borrowed" : "available";
+            System.out.printf("%d. %s (%s)\n",sno.getAndIncrement() , book.getBookName(),borrowed );
         });
     }
 

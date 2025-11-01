@@ -15,4 +15,12 @@ public class BookService {
     List<Book> findAllBooks(){
         return bookRepository.findAll();
     }
+
+    public boolean bookExists(String bookName) {
+       return bookRepository.existsById(bookName);
+    }
+
+    public void save(Book book) {
+        bookRepository.save(book);
+    }
 }

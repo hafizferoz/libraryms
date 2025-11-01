@@ -77,7 +77,7 @@ public class LibraryServiceImpl implements LibraryService{
         List<Book> books = bookService.findAllBooks();
 
         if (books.isEmpty()) {
-            System.out.println("No books are registered");
+            System.out.println("No books are registered.");
             return;
         }
         AtomicInteger sno = new AtomicInteger(1);
@@ -89,7 +89,19 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void borrow(String bookName) {
-
+        if (verifyIsUserLogin()) return;
+        Optional<Book> book = bookService.findBookById(bookName);
+        if (!book.isPresent())
+            System.out.printf("Sorry, \"%s\" is not registered.\n", bookName);
+        Book borrowedBook = book.get();
+        if (!borrowedBook.isBorrowed()) {
+            borrowedBook.setBorrowed(true);
+            borrowedBook.setBorrowedBy(loggedUser.get());
+            bookService.save(borrowedBook);
+            System.out.printf("You borrowed %s\n", bookName);
+        } else {
+            System.out.printf("Sorry, \"%s\" is currently not available.\n", bookName);
+        }
     }
 
     @Override

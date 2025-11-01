@@ -9,8 +9,10 @@ rectangle "Library CLI Application" {
     component "LibraryService" as service
     component "UserService" as userService
     component "BookService" as bookService
+     component "WaitListService" as waitListService
     component "UserRepository" as userRepo
     component "BookRepository" as bookRepo
+    component "WaitListRepository" as waitListRepo
 }
 
 database "H2 In-Memory DB" as h2
@@ -20,17 +22,19 @@ cli --> handler : parse and delegate command
 handler --> service : process library actions
 service --> userService : manage users
 service --> bookService : manage books
+service --> waitListService : manage waitList
 userService --> userRepo : save/find users
 bookService --> bookRepo : save/find books
+waitListService --> waitListRepo : save/find waitList
 userRepo --> h2
 bookRepo --> h2
-
+waitListRepo --> h2
 note right of cli
 CLI runs inside Spring Boot
 using ApplicationRunner or CommandLineRunner
 end note
 
-note right of h2
+note bottom of h2
 Data stored temporarily in memory
 Resets on each run
 end note

@@ -9,8 +9,10 @@ rectangle "Spring Boot CLI Application" {
   process "LibraryService" as libraryService
   process "UserService" as userService
   process "BookService" as bookService
+  process "WaitListService" as waitListService
   process "UserRepository" as userRepo
   process "BookRepository" as bookRepo
+  process "WaitListRepository" as waitListRepo
 }
 
 database "H2 Database" as h2
@@ -20,18 +22,23 @@ cli --> handler : Parse input
 handler --> libraryService : Invoke action
 libraryService --> userService : Manage user logic
 libraryService --> bookService : Manage book logic
+libraryService --> waitListService : Manage waitList logic
 
 userService --> userRepo : Query / Update user data
 bookService --> bookRepo : Query / Update book data
+waitListService --> waitListRepo : Query / Update waitList data
 
 userRepo --> h2 : SELECT/INSERT/UPDATE users
 bookRepo --> h2 : SELECT/INSERT/UPDATE books
+waitListRepo --> h2 : SELECT/INSERT/UPDATE waitList
 
 h2 --> userRepo : User data
 h2 --> bookRepo : Book data
+h2 --> waitListRepo : WaitList data
 
 bookService --> handler : Response message
 userService --> handler : User data / status
+waitListService --> handler : WaitList data / status
 handler --> cli : Display result
 cli --> user : Show output on terminal
 

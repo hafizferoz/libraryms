@@ -20,13 +20,10 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void login(String user) {
-        if(loggedUser!=null && loggedUser.isPresent()){
-            System.out.println("You're alreadty logged in!");
-            return;
-        }
+        if (verifyIsUserLogout()) return;
         loggedUser = userService.findUser(user);
         String username = loggedUser.get().getUsername();
-        if(loggedUser.isPresent() && username.equalsIgnoreCase("admin")){
+        if(isAdmin(username)){
             System.out.println("Hello, admin!\nYou have access to library management.");
         }else{
             System.out.printf("Hello, %s!\n", username);
@@ -34,15 +31,32 @@ public class LibraryServiceImpl implements LibraryService{
 
     }
 
+    private boolean isAdmin(String username) {
+        return loggedUser.isPresent() && username.equalsIgnoreCase("admin");
+    }
+
+    private boolean verifyIsUserLogout() {
+        if(loggedUser!=null && loggedUser.isPresent()){
+            System.out.println("You're already logged in!");
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void logout() {
-        if(loggedUser==null || !loggedUser.isPresent()){
-            System.out.println("You're not logged in!");
-            return;
-        }
+        if (verifyIsUserLogin()) return;
         String username = loggedUser.get().getUsername();
         System.out.printf("Goodbye, %s!\n", username);
         loggedUser=null;
+    }
+
+    private boolean verifyIsUserLogin() {
+        if(loggedUser==null || !loggedUser.isPresent()){
+            System.out.println("You're not logged in!");
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -51,8 +65,17 @@ public class LibraryServiceImpl implements LibraryService{
     }
 
     @Override
-    public List<Book> listBooks() {
-        return null;
+    public void listBooks() {
+       if(verifyIsUserLogin()) return;
+       List<Book> books =  bookService.findAllBooks();
+
+        if (books.isEmpty()) {
+            System.out.println("No books are registered"); return;
+        }
+        int i = 1;
+        for (Book book : books)
+            System.out.printf("%d. %s (%s)%n", i++, book.getBookName(), book.isBorrowed() ? "available" : "borrowed");
+        return;
     }
 
     @Override

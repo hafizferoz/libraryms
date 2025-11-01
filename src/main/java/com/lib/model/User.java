@@ -15,8 +15,8 @@ public class User implements Serializable {
     @Column(name = "user_name")
     private String username;
 
-    @OneToMany(mappedBy = "user")
-    private List<BorrowedBooks> borrowedBooks;
+    @OneToMany(mappedBy = "borrowedBy")
+    private List<Book> borrowedBooks;
 
     @OneToMany(mappedBy = "user")
     private List<WaitList> waitlist;

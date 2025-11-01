@@ -12,7 +12,7 @@ public interface LibraryService {
 
     void addBook(String bookName);
 
-    List<Book> listBooks();
+    void listBooks();
 
     void borrow(String bookName);
 

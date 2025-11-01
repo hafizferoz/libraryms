@@ -30,7 +30,7 @@ CLI runs inside Spring Boot
 using ApplicationRunner or CommandLineRunner
 end note
 
-note bottom of h2
+note right of h2
 Data stored temporarily in memory
 Resets on each run
 end note

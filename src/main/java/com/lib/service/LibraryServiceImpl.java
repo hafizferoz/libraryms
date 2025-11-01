@@ -20,10 +20,15 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void login(String username) {
-
+        if(loggedUser!=null && loggedUser.isPresent()){
+            System.out.println("You're alreadty logged in!");
+            return;
+        }
         loggedUser = userService.findUser(username);
         if(loggedUser.isPresent() && loggedUser.get().getUsername().equalsIgnoreCase("admin")){
             System.out.println("Hello, admin!\nYou have access to library management.\n");
+        }else{
+            System.out.printf("Hello, %s!", loggedUser.get().getUsername() );
         }
 
     }

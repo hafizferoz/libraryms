@@ -1,0 +1,38 @@
+@startuml
+title Library Management System Design
+
+actor User as user
+
+rectangle "Library CLI Application" {
+    component "LibraryCliApplication" as cli
+    component "CommandHandler" as handler
+    component "LibraryService" as service
+    component "UserService" as userService
+    component "BookService" as bookService
+    component "UserRepository" as userRepo
+    component "BookRepository" as bookRepo
+}
+
+database "H2 In-Memory DB" as h2
+
+user --> cli : enters command
+cli --> handler : parse and delegate command
+handler --> service : process library actions
+service --> userService : manage users
+service --> bookService : manage books
+userService --> userRepo : save/find users
+bookService --> bookRepo : save/find books
+userRepo --> h2
+bookRepo --> h2
+
+note right of cli
+CLI runs inside Spring Boot
+using ApplicationRunner or CommandLineRunner
+end note
+
+note bottom of h2
+Data stored temporarily in memory
+Resets on each run
+end note
+
+@enduml

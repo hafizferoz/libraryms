@@ -1,0 +1,36 @@
+@startuml
+title ORM Design - Library Management System
+
+entity "User" as User {
+  * id : Long <<PK>>
+  --
+  name : String
+}
+
+entity "Book" as Book {
+  * id : Long <<PK>>
+  --
+  title : String
+  status : String  // available, borrowed
+}
+
+entity "Borrowed" as Borrowed {
+  * id : Long <<PK>>
+  --
+  borrowDate : LocalDateTime
+  returnDate : LocalDateTime
+}
+
+entity "Waitlist" as Waitlist {
+  * id : Long <<PK>>
+  --
+  position : Integer
+}
+
+' --- Relationships ---
+User ||--o{ Borrowed : borrows >
+Book ||--o{ Borrowed : is borrowed in >
+User ||--o{ Waitlist : requests >
+Book ||--o{ Waitlist : queued for >
+
+@enduml

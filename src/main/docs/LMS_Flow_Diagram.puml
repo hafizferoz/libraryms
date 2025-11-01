@@ -1,0 +1,38 @@
+@startuml
+title DFD Level 2 - Library CLI (Detailed Data Interaction)
+
+actor "User" as user
+
+rectangle "Spring Boot CLI Application" {
+  process "LibraryCliApplication" as cli
+  process "CommandHandler" as handler
+  process "LibraryService" as libraryService
+  process "UserService" as userService
+  process "BookService" as bookService
+  process "UserRepository" as userRepo
+  process "BookRepository" as bookRepo
+}
+
+database "H2 Database" as h2
+
+user --> cli : Input commands
+cli --> handler : Parse input
+handler --> libraryService : Invoke action
+libraryService --> userService : Manage user logic
+libraryService --> bookService : Manage book logic
+
+userService --> userRepo : Query / Update user data
+bookService --> bookRepo : Query / Update book data
+
+userRepo --> h2 : SELECT/INSERT/UPDATE users
+bookRepo --> h2 : SELECT/INSERT/UPDATE books
+
+h2 --> userRepo : User data
+h2 --> bookRepo : Book data
+
+bookService --> handler : Response message
+userService --> handler : User data / status
+handler --> cli : Display result
+cli --> user : Show output on terminal
+
+@enduml

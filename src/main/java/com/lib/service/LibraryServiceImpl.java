@@ -93,10 +93,11 @@ public class LibraryServiceImpl implements LibraryService{
     @Override
     public void borrow(String bookName) {
         if (!verifyIsUserLogin()) return;
-        Optional<Book> book = bookService.findBookById(bookName);
-        if (!book.isPresent() || book.get()==null)
+        Book borrowedBook = bookService.findBookById(bookName).orElse(null);
+        if (borrowedBook ==null) {
             System.out.printf("Sorry, \"%s\" is not registered.\n", bookName);
-        Book borrowedBook = book.get();
+            return;
+        }
         if (!borrowedBook.isBorrowed()) {
             borrowedBook.setBorrowed(true);
             borrowedBook.setBorrowedBy(loggedUser.get());

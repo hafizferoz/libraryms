@@ -80,12 +80,12 @@ public class LibraryServiceImpl implements LibraryService{
         List<Book> books = bookService.findAllBooks();
 
         if (books.isEmpty()) {
-            System.out.println("No books are registered.");
+            System.out.println("No books are registered");
             return;
         }
         AtomicInteger sno = new AtomicInteger(1);
         books.forEach(book -> {
-            String borrowed = book.isBorrowed() ?  "borrowed" : "available";
+            String borrowed = book.isBorrowed() || book.getBorrowedBy()!=null?  "borrowed" : "available";
             System.out.printf("%d. %s (%s)\n",sno.getAndIncrement() , book.getBookName(),borrowed );
         });
     }
@@ -94,14 +94,14 @@ public class LibraryServiceImpl implements LibraryService{
     public void borrow(String bookName) {
         if (!verifyIsUserLogin()) return;
         Optional<Book> book = bookService.findBookById(bookName);
-        if (!book.isPresent())
+        if (!book.isPresent() || book.get()==null)
             System.out.printf("Sorry, \"%s\" is not registered.\n", bookName);
         Book borrowedBook = book.get();
         if (!borrowedBook.isBorrowed()) {
             borrowedBook.setBorrowed(true);
             borrowedBook.setBorrowedBy(loggedUser.get());
             bookService.save(borrowedBook);
-            System.out.printf("You borrowed %s\n", bookName);
+            System.out.printf("You borrowed %s.\n", bookName);
         } else {
             System.out.printf("Sorry, \"%s\" is currently not available.\n", bookName);
         }
@@ -125,6 +125,20 @@ public class LibraryServiceImpl implements LibraryService{
         borrowedBook.setBorrowed(false);
         bookService.save(borrowedBook);
         System.out.printf("You returned \"%s\".\n",bookName);
+
+        List<WaitList> waitlist = waitListService.findWaitlistByBookOrderAndPosition(book.get());
+        if (!waitlist.isEmpty()) {
+            WaitList first = waitlist.remove(0);
+            User next = first.getUser();
+            book.get().setBorrowedBy(next);
+            bookService.save(book.get());
+            waitListService.delete(first);
+            waitlist.forEach(wl -> {
+                wl.setPosition(wl.getPosition()-1);
+            });
+            waitListService.saveBatch(waitlist);
+            //System.out.println("User " + next.getUsername()+ " got the book \"" + bookName + "\" from their waitlist");
+        }
     }
 
     @Override
@@ -157,6 +171,14 @@ public class LibraryServiceImpl implements LibraryService{
         if (borrowed.isEmpty())
             System.out.println("You don't have any books borrowed yet.");
         else {
+
+            borrowed.forEach(book -> {
+                if(!book.isBorrowed() && book.getBorrowedBy().equals(loggedUser.get()))
+                System.out.println("You got the book \"" + book.getBookName() + "\" from your waitlist");
+                book.setBorrowed(true);
+                bookService.save(book);
+            });
+
             System.out.println("Your borrowed books:");
             AtomicInteger sno = new AtomicInteger(1);
             borrowed.forEach(book -> {
@@ -170,7 +192,7 @@ public class LibraryServiceImpl implements LibraryService{
             System.out.println("Your wait lists:");
             AtomicInteger sno = new AtomicInteger(1);
             waitlists.forEach(waitList -> {
-                System.out.println(sno.getAndIncrement() + waitList.getBook().getBookName() + " - position " + waitList.getPosition());
+                System.out.println(sno.getAndIncrement() + ". " + waitList.getBook().getBookName() + " - position " + waitList.getPosition());
             });
         }
     }

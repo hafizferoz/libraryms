@@ -23,11 +23,19 @@ public class WaitListService {
         return waitlistRepository.existsByBookAndUser(book,user);
     }
 
-    public Collection<WaitList> findWaitlistByBookOrderAndPosition(Book book) {
+    public List<WaitList> findWaitlistByBookOrderAndPosition(Book book) {
         return waitlistRepository.findByBookOrderByPositionAsc(book);
     }
 
     public void save(WaitList waitlist) {
         waitlistRepository.save(waitlist);
+    }
+
+    public void delete(WaitList waitList) {
+        waitlistRepository.delete(waitList);
+    }
+
+    public void saveBatch(List<WaitList> waitlist) {
+        waitlistRepository.saveAll(waitlist);
     }
 }

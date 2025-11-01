@@ -129,7 +129,24 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void waitlist(String bookName) {
+        if (!verifyIsUserLogin()) return;
+        Book book = bookService.findBookById(bookName).orElse(null);
+        if (book == null) {
+            System.out.println("Sorry, \"" + bookName + "\" is not registered.");
+            return;
+        }
+        if (!book.isBorrowed()) {
+            System.out.println("Book \"" + bookName + "\" is available. You can borrow it directly.");
+            return;
+        }
+        if (waitListService.waitlistExistsByBookAndUser(book, loggedUser.get())) {
+            System.out.println("You are already in the waitlist of \"" + bookName + "\".");
+            return;
+        }
 
+        int position = waitListService.findWaitlistByBookOrderAndPosition(book).size() + 1;
+        waitListService.save(new WaitList(book, loggedUser.get(), position));
+        System.out.println("You are added to the wait list of \"" + bookName + "\", your position is " + position + ".");
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class BorrowedBooks implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

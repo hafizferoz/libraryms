@@ -10,6 +10,7 @@ import java.util.List;
 public class WaitList implements Serializable {
 
         @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
         @ManyToOne
@@ -22,6 +23,13 @@ public class WaitList implements Serializable {
 
         @Column(name = "position")
         private int position;
+
+        public WaitList(){}
+        public WaitList(Book book, User user, int position) {
+                this.book=book;
+                this.user=user;
+                this.position=position;
+        }
 
         public Long getId() {
                 return id;

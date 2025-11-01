@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Transactional
@@ -66,16 +68,17 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void listBooks() {
-       if(verifyIsUserLogin()) return;
-       List<Book> books =  bookService.findAllBooks();
+        if (verifyIsUserLogin()) return;
+        List<Book> books = bookService.findAllBooks();
 
         if (books.isEmpty()) {
-            System.out.println("No books are registered"); return;
+            System.out.println("No books are registered");
+            return;
         }
-        int i = 1;
-        for (Book book : books)
-            System.out.printf("%d. %s (%s)%n", i++, book.getBookName(), book.isBorrowed() ? "available" : "borrowed");
-        return;
+        AtomicInteger sno = new AtomicInteger(0);
+        books.forEach(book -> {
+            System.out.printf("%d. %s (%s)%n",sno.getAndIncrement() , book.getBookName(), book.isBorrowed() ? "available" : "borrowed");
+        });
     }
 
     @Override

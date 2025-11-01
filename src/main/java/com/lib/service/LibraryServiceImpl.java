@@ -1,12 +1,18 @@
 package com.lib.service;
 
 import com.lib.model.Book;
+import com.lib.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class LibraryServiceImpl implements LibraryService{
+    @Autowired
+    UserService userService;
+    @Autowired
+    BookService bookService;
 
     @Override
     public void login(String username) {

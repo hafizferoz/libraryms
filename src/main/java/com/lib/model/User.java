@@ -41,7 +41,7 @@ public class User implements Serializable {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return StringUtils.equalsIgnoreCase(username, user.username);
+        return StringUtils.equalsIgnoreCase(username, user.getUsername());
     }
 
     @Override

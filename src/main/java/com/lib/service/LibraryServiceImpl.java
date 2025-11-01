@@ -46,7 +46,7 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void logout() {
-        if (verifyIsUserLogin()) return;
+        if (!verifyIsUserLogin()) return;
         String username = loggedUser.get().getUsername();
         System.out.printf("Goodbye, %s!\n", username);
         loggedUser=null;
@@ -55,14 +55,14 @@ public class LibraryServiceImpl implements LibraryService{
     private boolean verifyIsUserLogin() {
         if(loggedUser==null || !loggedUser.isPresent()){
             System.out.println("You're not logged in!");
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     @Override
     public void addBook(String bookName) {
-        if(verifyIsUserLogin()) return;
+        if(!verifyIsUserLogin()) return;
         if (!isAdmin()) { System.out.println("Only admin can add books."); return; }
         if (bookService.bookExists(bookName)) {
             System.out.println("Book \"" + bookName + "\" already exists."); return;
@@ -73,7 +73,7 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void listBooks() {
-        if (verifyIsUserLogin()) return;
+        if (!verifyIsUserLogin()) return;
         List<Book> books = bookService.findAllBooks();
 
         if (books.isEmpty()) {
@@ -89,7 +89,7 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void borrow(String bookName) {
-        if (verifyIsUserLogin()) return;
+        if (!verifyIsUserLogin()) return;
         Optional<Book> book = bookService.findBookById(bookName);
         if (!book.isPresent())
             System.out.printf("Sorry, \"%s\" is not registered.\n", bookName);
@@ -106,7 +106,22 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void returnBook(String bookName) {
+        if (!verifyIsUserLogin()) return;
+        Optional<Book> book = bookService.findBookById(bookName);
+        if (!book.isPresent()) {
+            System.out.printf("Sorry, \"%s\" is not registered.\n",bookName);
+            return;
+        }
+        Book borrowedBook = book.get();
+        if (borrowedBook.getBorrowedBy() == null || !borrowedBook.getBorrowedBy().equals(loggedUser.get())) {
+            System.out.printf("Sorry, you didn't borrow \"%s\".\n",bookName);
+            return;
+        }
 
+        borrowedBook.setBorrowedBy(null);
+        borrowedBook.setBorrowed(false);
+        bookService.save(borrowedBook);
+        System.out.printf("You returned \"%s\".\n",bookName);
     }
 
     @Override

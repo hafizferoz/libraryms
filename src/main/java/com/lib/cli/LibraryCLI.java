@@ -54,6 +54,7 @@ public class LibraryCLI implements Runnable{
                     libraryService.borrow(arg);
                     break;
                 case "return":
+                    if(arg !=null)
                     libraryService.returnBook(arg);
                     break;
                 case "waitlist":

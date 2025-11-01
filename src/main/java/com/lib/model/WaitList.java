@@ -20,9 +20,14 @@ public class WaitList implements Serializable {
         @JoinColumn(name = "book_name", referencedColumnName = "book_name")
         private Book book;
 
-        @Column(name = "postiion")
+        @Column(name = "position")
         private int position;
 
+        public Long getId() {
+                return id;
+        }
 
-
+        public void setId(Long id) {
+                this.id = id;
+        }
 }

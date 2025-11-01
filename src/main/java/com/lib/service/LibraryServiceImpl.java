@@ -2,6 +2,7 @@ package com.lib.service;
 
 import com.lib.model.Book;
 import com.lib.model.User;
+import com.lib.model.WaitList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,8 @@ public class LibraryServiceImpl implements LibraryService{
     @Autowired
     BookService bookService;
     Optional<User> loggedUser;
+    @Autowired
+    private WaitListService waitListService;
 
     @Override
     public void login(String user) {
@@ -27,8 +30,8 @@ public class LibraryServiceImpl implements LibraryService{
             System.out.println("Hello, admin!\nYou have access to library management.");
         }else{
             System.out.printf("Hello, %s!\n", user);
+            status();
         }
-
     }
 
     private boolean isAdmin() {
@@ -131,6 +134,27 @@ public class LibraryServiceImpl implements LibraryService{
 
     @Override
     public void status() {
+        if (!verifyIsUserLogin()) return;
+        List<Book> borrowed = bookService.findAllBooks();
+        borrowed.removeIf(book -> book.getBorrowedBy() == null || !book.getBorrowedBy().equals(loggedUser.get()));
+        if (borrowed.isEmpty())
+            System.out.println("You don't have any books borrowed yet.");
+        else {
+            System.out.println("Your borrowed books:");
+            AtomicInteger sno = new AtomicInteger(1);
+            borrowed.forEach(book -> {
+                System.out.println(sno.getAndIncrement() + ". " + book.getBookName());
+            });
 
+        }
+
+        List<WaitList> waitlists = waitListService.findWaitListByUser(loggedUser.get());
+        if (!waitlists.isEmpty()) {
+            System.out.println("Your wait lists:");
+            AtomicInteger sno = new AtomicInteger(1);
+            waitlists.forEach(waitList -> {
+                System.out.println(sno.getAndIncrement() + waitList.getBook().getBookName() + " - position " + waitList.getPosition());
+            });
+        }
     }
 }

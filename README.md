@@ -28,7 +28,7 @@ Users are notified on login if they received a book from their waiting list. The
 
 Command Parsing: Booth quoted and unquoted book names are handled.
 
-Application Start:
+# Application Start and Instructions manual:
 
 LibraryMSApplication: The spring boot main application runs a cli thread to interact via command prompt.
 
@@ -41,3 +41,19 @@ To start on Unix/Linux:
 
 To start on windows:
 start.bat
+
+Once the application is up and running. A welcome message is shown.
+
+Welcome to Library Management System.
+Please enter login name or create user:
+
+## Commands
+
+* `login [name]` - Logs in as this user and creates the user if they do not already exist
+* `add [book_name]` - Adds a new book to the library (can only be done by the user `admin`)
+* `list` - Displays the list of books in the library
+* `borrow [book_name]` - Borrows a book for the logged-in user. The book is marked as borrowed and will not appear in the library's available list
+* `return [book_name]` - Returns a borrowed book to the library. The book becomes available again
+* `waitlist [book_name]` - Adds current user to the wait list of the book which is currently borrowed
+* `status` - Displays a list of books currently borrowed by the logged-in user and his wait lists (if any)
+* `logout` - Logs out of the current user

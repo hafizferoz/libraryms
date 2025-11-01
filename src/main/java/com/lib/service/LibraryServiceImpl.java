@@ -27,9 +27,9 @@ public class LibraryServiceImpl implements LibraryService{
         loggedUser = userService.findUser(user);
         String username = loggedUser.get().getUsername();
         if(loggedUser.isPresent() && username.equalsIgnoreCase("admin")){
-            System.out.println("Hello, admin!\nYou have access to library management.\n");
+            System.out.println("Hello, admin!\nYou have access to library management.");
         }else{
-            System.out.printf("Hello, %s!", username);
+            System.out.printf("Hello, %s!\n", username);
         }
 
     }

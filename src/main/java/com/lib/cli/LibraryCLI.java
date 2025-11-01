@@ -34,27 +34,30 @@ public class LibraryCLI implements Runnable{
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1].replaceAll("^\"|\"$", "") : null;
 
-        if (arg != null)
             switch (cmd) {
                 case "login":
+                    if (arg != null)
                     libraryService.login(arg);
                     break;
                 case "logout":
                     libraryService.logout();
                     break;
                 case "add":
+                    if (arg != null)
                     libraryService.addBook(arg);
                     break;
                 case "list":
                     libraryService.listBooks();
                     break;
                 case "borrow":
+                    if (arg != null)
                     libraryService.borrow(arg);
                     break;
                 case "return":
                     libraryService.returnBook(arg);
                     break;
                 case "waitlist":
+                    if (arg != null)
                     libraryService.waitlist(arg);
                     break;
                 case "status":

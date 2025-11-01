@@ -15,11 +15,19 @@ public class User implements Serializable {
     @Column(name = "user_name")
     private String username;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "user")
     private List<BorrowedBooks> borrowedBooks;
 
     @OneToMany(mappedBy = "user")
     private List<WaitList> waitlist;
+
+    public User(){
+    }
+
+    public User(String username) {
+        this.username=username;
+    }
+
     public String getUsername() {
         return username;
     }

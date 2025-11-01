@@ -10,6 +10,7 @@ import java.util.Scanner;
 @Component
 public class LibraryCLI implements Runnable{
     private final Scanner scanner;
+    @Autowired
     private LibraryService libraryService;
     public LibraryCLI() {
         this.scanner = new Scanner(System.in);

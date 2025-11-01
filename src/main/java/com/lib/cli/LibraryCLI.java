@@ -34,17 +34,35 @@ public class LibraryCLI implements Runnable{
         String cmd = parts[0];
         String arg = parts.length > 1 ? parts[1].replaceAll("^\"|\"$", "") : null;
 
-        switch (cmd) {
-            case "login": libraryService.login(arg); break;
-            case "logout": libraryService.logout(); break;
-            case "add": libraryService.addBook(arg); break;
-            case "list": libraryService.listBooks(); break;
-            case "borrow": libraryService.borrow(arg); break;
-            case "return": libraryService.returnBook(arg); break;
-            case "waitlist": libraryService.waitlist(arg); break;
-            case "status": libraryService.status(); break;
-            default: System.out.println("Unknown command: " + cmd);
-        }
+        if (arg != null)
+            switch (cmd) {
+                case "login":
+                    libraryService.login(arg);
+                    break;
+                case "logout":
+                    libraryService.logout();
+                    break;
+                case "add":
+                    libraryService.addBook(arg);
+                    break;
+                case "list":
+                    libraryService.listBooks();
+                    break;
+                case "borrow":
+                    libraryService.borrow(arg);
+                    break;
+                case "return":
+                    libraryService.returnBook(arg);
+                    break;
+                case "waitlist":
+                    libraryService.waitlist(arg);
+                    break;
+                case "status":
+                    libraryService.status();
+                    break;
+                default:
+                    System.out.println("Unknown command: " + cmd);
+            }
 
     }
 }

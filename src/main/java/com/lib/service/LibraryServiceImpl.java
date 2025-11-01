@@ -19,23 +19,30 @@ public class LibraryServiceImpl implements LibraryService{
     Optional<User> loggedUser;
 
     @Override
-    public void login(String username) {
+    public void login(String user) {
         if(loggedUser!=null && loggedUser.isPresent()){
             System.out.println("You're alreadty logged in!");
             return;
         }
-        loggedUser = userService.findUser(username);
-        if(loggedUser.isPresent() && loggedUser.get().getUsername().equalsIgnoreCase("admin")){
+        loggedUser = userService.findUser(user);
+        String username = loggedUser.get().getUsername();
+        if(loggedUser.isPresent() && username.equalsIgnoreCase("admin")){
             System.out.println("Hello, admin!\nYou have access to library management.\n");
         }else{
-            System.out.printf("Hello, %s!", loggedUser.get().getUsername() );
+            System.out.printf("Hello, %s!", username);
         }
 
     }
 
     @Override
     public void logout() {
-
+        if(loggedUser==null || !loggedUser.isPresent()){
+            System.out.println("You're not logged in!");
+            return;
+        }
+        String username = loggedUser.get().getUsername();
+        System.out.printf("Goodbye, %s!\n", username);
+        loggedUser=null;
     }
 
     @Override

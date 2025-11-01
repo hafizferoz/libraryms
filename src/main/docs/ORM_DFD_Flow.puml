@@ -12,6 +12,7 @@ entity "Book" as Book {
   --
   bookName : String
   is_borrowed : Boolean  // available, borrowed
+  borrowedBy : User
 }
 
 entity "BorrowedBooks" as BorrowedBooks {

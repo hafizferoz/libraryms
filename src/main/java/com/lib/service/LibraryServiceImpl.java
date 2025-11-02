@@ -102,7 +102,7 @@ public class LibraryServiceImpl implements LibraryService{
             borrowedBook.setBorrowed(true);
             borrowedBook.setBorrowedBy(loggedUser.get());
             bookService.save(borrowedBook);
-            System.out.printf("You borrowed %s.\n", bookName);
+            System.out.printf("You borrowed \"%s\".\n", bookName);
         } else {
             System.out.printf("Sorry, \"%s\" is currently not available.\n", bookName);
         }
@@ -180,7 +180,7 @@ public class LibraryServiceImpl implements LibraryService{
                 bookService.save(book);
             });
 
-            System.out.println("Your borrowed books:");
+            System.out.print("Your borrowed books:\n");
             AtomicInteger sno = new AtomicInteger(1);
             borrowed.forEach(book -> {
                 System.out.println(sno.getAndIncrement() + ". " + book.getBookName());

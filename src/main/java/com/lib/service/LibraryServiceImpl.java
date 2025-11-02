@@ -170,7 +170,7 @@ public class LibraryServiceImpl implements LibraryService{
         List<Book> borrowed = bookService.findAllBooks();
         borrowed.removeIf(book -> book.getBorrowedBy() == null || !book.getBorrowedBy().equals(loggedUser.get()));
         if (borrowed.isEmpty())
-            System.out.println("You don't have any books borrowed yet.");
+            System.out.print("You don't have any books borrowed yet.\n");
         else {
 
             borrowed.forEach(book -> {

@@ -183,17 +183,17 @@ public class LibraryServiceImpl implements LibraryService{
             System.out.print("Your borrowed books:\n");
             AtomicInteger sno = new AtomicInteger(1);
             borrowed.forEach(book -> {
-                System.out.println(sno.getAndIncrement() + ". " + book.getBookName());
+                System.out.print(sno.getAndIncrement() + ". " + book.getBookName() +"\n");
             });
 
         }
 
         List<WaitList> waitlists = waitListService.findWaitListByUser(loggedUser.get());
         if (!waitlists.isEmpty()) {
-            System.out.println("Your wait lists:");
+            System.out.print("Your wait lists:\n");
             AtomicInteger sno = new AtomicInteger(1);
             waitlists.forEach(waitList -> {
-                System.out.println(sno.getAndIncrement() + ". " + waitList.getBook().getBookName() + " - position " + waitList.getPosition());
+                System.out.print(sno.getAndIncrement() + ". " + waitList.getBook().getBookName() + " - position " + waitList.getPosition()+"\n");
             });
         }
     }

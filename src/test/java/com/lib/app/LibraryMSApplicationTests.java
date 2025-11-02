@@ -51,6 +51,20 @@ class LibraryMSApplicationTests {
 				"1. 1984"));
 		Assertions.assertTrue(run("logout").contains("Goodbye, Alice!"));
 
+		// User Bob Tests
+		Assertions.assertTrue(run("login Bob").contains("Hello, Bob!\n" +
+				"You don't have any books borrowed yet."));
+		Assertions.assertTrue(run("borrow \"1985\"").contains("Sorry, \"1985\" is not registered."));
+		Assertions.assertTrue(run("borrow \"1984\"").contains("Sorry, \"1984\" is currently not available."));
+		Assertions.assertTrue(run("waitlist \"1985\"").contains("Sorry, \"1985\" is not registered."));
+		Assertions.assertTrue(run("waitlist \"1984\"").contains("You are added to the wait list of \"1984\", your position is 1."));
+		Assertions.assertTrue(run("borrow \"The Great Gatsby\"").contains("You borrowed \"The Great Gatsby\"."));
+		Assertions.assertTrue(run("status").contains("Your borrowed books:\n" +
+				"1. The Great Gatsby\n" +
+				"Your wait lists:\n" +
+				"1. 1984 - position 1"));
+		Assertions.assertTrue(run("logout").contains("Goodbye, Bob!"));
+
 	}
 
 }

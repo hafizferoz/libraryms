@@ -175,7 +175,7 @@ public class LibraryServiceImpl implements LibraryService{
 
             borrowed.forEach(book -> {
                 if(!book.isBorrowed() && book.getBorrowedBy().equals(loggedUser.get()))
-                System.out.println("You got the book \"" + book.getBookName() + "\" from your waitlist");
+                System.out.print("You got the book \"" + book.getBookName() + "\" from your waitlist\n");
                 book.setBorrowed(true);
                 bookService.save(book);
             });

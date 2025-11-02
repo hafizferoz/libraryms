@@ -9,9 +9,10 @@ import java.util.Scanner;
 @Component
 public class LibraryCLI implements Runnable{
     private final Scanner scanner;
+    private final LibraryService libraryService;
     @Autowired
-    private LibraryService libraryService;
-    public LibraryCLI() {
+    public LibraryCLI(LibraryService libraryService) {
+        this.libraryService = libraryService;
         this.scanner = new Scanner(System.in);
     }
     public void run() {
@@ -33,7 +34,7 @@ public class LibraryCLI implements Runnable{
         }
     }
 
-    private void processCmd(String input) {
+    public void processCmd(String input) {
         try {
             String[] parts = input.split(" ", 2);
             String cmd = parts[0];

@@ -57,3 +57,8 @@ Please enter login name or create user:
 * `waitlist [book_name]` - Adds current user to the wait list of the book which is currently borrowed
 * `status` - Displays a list of books currently borrowed by the logged-in user and his wait lists (if any)
 * `logout` - Logs out of the current user
+
+
+# Integration Testing 
+
+The Application has inbuilt integration testing which has all the test cases added for all commands.

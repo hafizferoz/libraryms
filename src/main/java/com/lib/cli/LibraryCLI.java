@@ -19,6 +19,7 @@ public class LibraryCLI implements Runnable{
         System.out.print("Welcome to Library Management System.\nPlease enter login name or create user: \n ");
         try {
             while (true) {
+                System.out.print("$");
                 if (!scanner.hasNextLine()) {
                     break;
                 }

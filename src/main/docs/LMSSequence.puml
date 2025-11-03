@@ -1,5 +1,5 @@
 @startuml
-title Library Management System Design
+title Library Management System Design - Conceptual Diagram
 
 actor User as user
 

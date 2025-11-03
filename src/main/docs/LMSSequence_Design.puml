@@ -1,0 +1,122 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title Library CLI - LibraryService Sequence Design Diagram
+
+actor User
+
+participant "LibraryCLI (Handler)" as CLI
+participant "LibraryService" as LibraryService
+participant "UserService" as UserService
+participant "BookService" as BookService
+participant "WaitListService" as WaitListService
+participant "UserRepository" as UserRepo
+participant "BookRepository" as BookRepo
+participant "WaitListRepository" as WaitListRepo
+database "H2 In-Memory DB" as H2
+
+== 1. login(username) ==
+User -> CLI : login("user")
+CLI -> LibraryService : login("user")
+LibraryService -> UserService : findOrCreateUser("user")
+UserService -> UserRepo : findById("Alice")
+UserRepo -> H2 : SELECT * FROM users WHERE user_name='user'
+alt user not found
+    UserRepo -> H2 : INSERT INTO users(user_name) VALUES('user')
+end
+H2 --> UserRepo : success
+UserRepo --> UserService : User entity
+UserService --> LibraryService : User entity
+LibraryService --> CLI : "Hello, User!"
+
+== 2. logout() ==
+User -> CLI : logout()
+CLI -> LibraryService : logout()
+LibraryService --> CLI : "Goodbye, User!"
+
+== 3. addBook(bookName) ==
+User -> CLI : addBook("bookname")
+CLI -> LibraryService : addBook("bookname")
+LibraryService -> LibraryService : getCurrentUser()
+alt currentUser == "admin"
+    LibraryService -> BookService : addBook("bookname")
+    BookService -> BookRepo : INSERT INTO books(book_name, is_borrowed, borrowed_by)
+    BookRepo -> H2 : execute insert
+    H2 --> BookRepo : OK
+else
+    LibraryService --> CLI : "Access denied"
+end
+LibraryService --> CLI : "Book added or denied"
+
+== 4. listBooks() ==
+User -> CLI : list()
+CLI -> LibraryService : listBooks()
+LibraryService -> BookService : getAllBooks()
+BookService -> BookRepo : SELECT * FROM books
+BookRepo -> H2 : query all
+H2 --> BookRepo : list of books
+BookRepo --> BookService : books[]
+BookService --> LibraryService : books[]
+LibraryService --> CLI : display books with status
+
+== 5. borrow(bookName) ==
+User -> CLI : borrow("bookname")
+CLI -> LibraryService : borrow("bookname")
+LibraryService -> LibraryService : getCurrentUser()
+LibraryService -> BookService : findBook("bookname")
+BookService -> BookRepo : SELECT * FROM books WHERE book_name='bookname'
+H2 --> BookRepo : book found
+alt book available
+    LibraryService -> BookService : markAsBorrowed("bookname", "user")
+    BookService -> BookRepo : UPDATE books SET is_borrowed=TRUE, borrowed_by='user'
+    LibraryService -> UserService : recordBorrowedBook("user", "bookname")
+    UserService -> UserRepo : INSERT INTO borrowed_books(user_name, book_name)
+else book not available
+    LibraryService -> WaitListService : addToWaitlist("user", "bookname")
+    WaitListService -> WaitListRepo : INSERT INTO waitlist(book_name, user_name, position)
+end
+LibraryService --> CLI : display result message
+
+== 6. returnBook(bookName) ==
+User -> CLI : returnBook("bookname")
+CLI -> LibraryService : returnBook("bookname")
+LibraryService -> UserService : verifyOwnership("user", "bookname")
+alt user owns book
+    LibraryService -> BookService : markAsReturned("bookname")
+    BookService -> BookRepo : UPDATE books SET is_borrowed=FALSE, borrowed_by=NULL
+    LibraryService -> WaitListService : checkNextInWaitlist("bookname")
+    WaitListService -> WaitListRepo : SELECT next user by position
+    alt nextUser exists
+        WaitListService -> LibraryService : notifyUser(nextUser)
+        LibraryService -> BookService : assignBook("bookname", nextUser)
+        BookService -> BookRepo : UPDATE books SET borrowed_by=nextUser, is_borrowed=TRUE
+        WaitListService -> WaitListRepo : DELETE FROM waitlist WHERE user_name=nextUser
+    end
+else
+    LibraryService --> CLI : "Sorry, you didn’t borrow this book"
+end
+LibraryService --> CLI : display return result
+
+== 7. waitlist(bookName) ==
+User -> CLI : waitlist("bookname")
+CLI -> LibraryService : waitlist("bookname")
+LibraryService -> BookService : findBook("bookname")
+BookService -> BookRepo : SELECT * FROM books WHERE book_name='bookname'
+H2 --> BookRepo : book found
+LibraryService -> WaitListService : addToWaitlist("user", "bookname")
+WaitListService -> WaitListRepo : INSERT INTO waitlist(book_name, user_name, position)
+WaitListRepo -> H2 : insert success
+LibraryService --> CLI : "Added to waitlist"
+
+== 8. status() ==
+User -> CLI : status()
+CLI -> LibraryService : status()
+LibraryService -> UserService : getBorrowedBooks("user")
+UserService -> UserRepo : SELECT * FROM borrowed_books WHERE user_name='user'
+H2 --> UserRepo : borrowed books
+LibraryService -> WaitListService : getUserWaitlists("user")
+WaitListService -> WaitListRepo : SELECT * FROM waitlist WHERE user_name='user'
+H2 --> WaitListRepo : waitlist entries
+LibraryService --> CLI : display borrowed + waitlisted books
+
+@enduml
